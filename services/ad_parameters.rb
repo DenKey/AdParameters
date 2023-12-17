@@ -5,10 +5,10 @@ require './config/loader'
 class AdParameters
   Proto = FYBER::Userconfiguration
 
-  def initialize(scope: nil, reject_if_no_creatives: false)
+  def initialize(file_path = 'data/fyber.xml', scope: nil, reject_if_no_creatives: false)
     @scope = scope
     @reject_if_no_creatives = reject_if_no_creatives
-    data = XmlParser.new('fyber.xml').call
+    data = XmlParser.new(file_path).call
     @placements = data[:placements]
     @creatives = data[:creatives]
     @placement_seq = Proto::PlacementSeq.new

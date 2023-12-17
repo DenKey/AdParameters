@@ -5,15 +5,14 @@ require './config/loader'
 # As we get configuration from Frontend I assume that all XML files
 # will have the same structure. Generally it depends from system architecture.
 class XmlParser
-  def initialize(file_name)
-    raise 'File name is mandatory' if file_name.nil? || file_name.empty?
-
-    file_path = File.join(Dir.pwd,'data', file_name)
+  def initialize(path)
+    file_path = File.join(Dir.pwd, path)
     file_str = File.read(file_path)
-
     raise 'XML file cannot be opened or empty' if file_str.nil? || file_str.empty?
 
     @data = Nokogiri::XML::DocumentFragment.parse(file_str)
+  rescue Errno::ENOENT
+    raise 'File path is wrong'
   end
 
   def call
