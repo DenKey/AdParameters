@@ -5,7 +5,9 @@ require './config/loader'
 class AdParameters
   Proto = FYBER::Userconfiguration
 
-  def initialize
+  def initialize(scope: nil, reject_if_no_creatives: false)
+    @scope = scope
+    @reject_if_no_creatives = reject_if_no_creatives
     data = XmlParser.new('fyber.xml').call
     @placements = data[:placements]
     @creatives = data[:creatives]
@@ -14,7 +16,11 @@ class AdParameters
 
   def call
     @placements.each do |placement|
-      @placement_seq.placement << build_proto_placement(placement)
+      if build_proto_placement(placement)
+        @placement_seq.placement << build_proto_placement(placement)
+      else
+        next
+      end
     end
 
     self
@@ -35,12 +41,23 @@ class AdParameters
   private
 
   def build_proto_placement(placement)
-    placement_proto = Proto::Placement.new(id: placement.id)
+    proto_creatives = []
     @creatives.each do |creative|
-      if creative.placement_eligible?(placement)
-        placement_proto.creative << Proto::Creative.new(id: creative.id, price: creative.price_eur)
+      if eligible?(creative, placement)
+        proto_creatives << Proto::Creative.new(id: creative.id, price: creative.price_eur)
       end
     end
-    placement_proto
+
+    return nil if @reject_if_no_creatives && proto_creatives.empty?
+
+    Proto::Placement.new(id: placement.id, creative: proto_creatives)
+  end
+
+  def eligible?(creative, placement)
+    if @scope
+      placement.id == @scope[:placement_id] && creative.price_eur >= @scope[:floor]
+    else
+      creative.placement_eligible?(placement)
+    end
   end
 end
