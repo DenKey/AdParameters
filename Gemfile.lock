@@ -1,0 +1,26 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    google-protobuf (3.25.1-x86_64-darwin)
+    nokogiri (1.15.5-x86_64-darwin)
+      racc (~> 1.4)
+    prettyprint (0.2.0)
+    racc (1.7.3)
+    rake (13.1.0)
+    zeitwerk (2.6.12)
+
+PLATFORMS
+  x86_64-darwin-21
+
+DEPENDENCIES
+  google-protobuf
+  nokogiri
+  prettyprint
+  rake (~> 13.1)
+  zeitwerk
+
+RUBY VERSION
+   ruby 3.2.2p53
+
+BUNDLED WITH
+   2.4.13
